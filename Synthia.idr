@@ -4,17 +4,13 @@ import Control.Eternal
 
 import Effect.System
 
-newLineFilter : Char -> Bool
-newLineFilter '\n'  = True
-newLineFilter _     = False
-
 main : IO ()
 main = do
     args <- System.getArgs
     if length args > 1 then do
         let Just cmd = args # 1
         ls <- readProcess' "ls ." False
-        let files       = split newLineFilter ls
+        let files       = splitOn '\n' ls
         let ipkgFinder  = filter (\x => isSuffixOf 
                                          (unpack ".ipkg")
                                          (unpack (trim x))) files
