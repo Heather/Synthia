@@ -5,8 +5,7 @@ import Control.Eternal
 import Effect.System
 
 main : IO ()
-main = do
-    args <- System.getArgs
+main = System.getArgs >>= \args =>
     if length args > 1 then do
         let Just cmd = args # 1
         ls <- readProcess' "ls ." False
