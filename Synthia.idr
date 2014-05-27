@@ -5,7 +5,8 @@ import Control.Eternal
 import Effect.System
 
 newLineFilter : Char -> Bool
-newLineFilter '\n' = True
+newLineFilter '\n'  = True
+newLineFilter _     = False
 
 main : IO ()
 main = do
