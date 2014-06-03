@@ -15,7 +15,7 @@ main = System.getArgs >>= \args =>
                         Just cmd => system $ case cmd of
                                         "install" => "idris --install "
                                         "build"   => "idris --build "
-                                       ++ concat(drop 1 args)
+                                       ++ concat <<| drop 1 args
                                        ++ " "
                                        ++ mypkg
                         _ => putStrLn "What?"
