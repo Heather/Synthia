@@ -12,11 +12,15 @@ main = System.getArgs >>= \args =>
         in when (length ipkgFinder > 0)
                 $ let Just mypkg = ipkgFinder # 0
                   in case args # 1 of
-                        Just cmd => system $ case cmd of
-                                        "install" => "idris --install "
-                                        "build"   => "idris --build "
-                                       ++ concat <<| drop 1 args
-                                       ++ " "
-                                       ++ mypkg
+                        Just cmd => let go = \c => system $ c ++ concat <<| drop 1 args
+                                                              ++ " "
+                                                              ++ mypkg
+                                    in case cmd of
+                                           "--help"     => putStrLn "No..."
+                                           "--version"  => putStrLn "0.0.1"
+                                           "install"    => go "idris --install "
+                                           "build"      => go "idris --build "
+                                           "clean"      => go "idris --clean "
+                                           _            => putStrLn "What?"
                         _ => putStrLn "What?"
     else putStrLn "Hi, I am Synthia, I am here to destroy your world"
