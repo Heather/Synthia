@@ -5,7 +5,7 @@ Synthia
 main = System.getArgs >>= \args =>
     if length args > 1 then
         let ipkgFinder = filter (\x => isSuffixOf <| unpack ".ipkg"
-                                                   <| unpack (trim x))
+                                                  <| unpack (trim x))
                            $ splitOn '\n' !(readProcess' "ls ." False)
         in when (length ipkgFinder > 0)
                 $ let Just mypkg = ipkgFinder # 0
