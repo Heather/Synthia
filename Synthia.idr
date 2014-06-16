@@ -18,9 +18,14 @@ main = System.getArgs >>= \args =>
                                     in case cmd of
                                            "--help"     => putStrLn "No..."
                                            "--version"  => putStrLn "0.0.1"
+                                           
                                            "install"    => go "idris --install "
                                            "build"      => go "idris --build "
                                            "clean"      => go "idris --clean "
+                                           "mkdoc"      => go "idris --mkdoc "
+                                           "checkpkg"   => go "idris --checkpkg "
+                                           "testpkg"    => go "idris --testpkg "
+                                           
                                            _            => putStrLn "What?"
                         _ => putStrLn "What?"
     else putStrLn "Hi, I am Synthia, I am here to destroy your world"
