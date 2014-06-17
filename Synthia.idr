@@ -19,12 +19,15 @@ install xs _ = do
                         system $ "mkdir " ++ dir
                         let repoDir = dir ++ reps ++ "\\"
                         system $ "git clone git@github.com:" ++ repo ++ ".git " ++ repoDir
-                        let pkg = filter (\x => isSuffixOf <| unpack ".ipkg"
-                                                           <| unpack (trim x))
-                                     $ splitOn '\n' !(ls repoDir)
-                        case (pkg # 0) of
-                            Just pkg => system $ "pushd " ++ repoDir ++ " & idris --install " ++ pkg
-                            _ => putStrLn "No ipkg in this repository" 
+                        let flist = splitOn '\n' !(ls repoDir)
+                        let makeF = filter (== "Makefile") flist
+                        case (makeF # 0) of
+                            Just _ => system $ "pushd " ++ repoDir ++ " & make & make install"
+                            _ => let pkg = filter (\x => isSuffixOf <| unpack ".ipkg"
+                                                                    <| unpack (trim x)) flist
+                                 in case (pkg # 0) of
+                                     Just pkg => system $ "pushd " ++ repoDir ++ " & idris --install " ++ pkg
+                                     _ => putStrLn "No ipkg in this repository" 
         _ => putStrLn "try Synthia install GitHubUser/Repo" 
 
 goC : List String -> List String -> String -> IO()
