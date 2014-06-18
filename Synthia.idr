@@ -56,6 +56,7 @@ main = System.getArgs >>= \args =>
                                "testpkg"    => goC pkg args "idris --testpkg "
                                
                                "install"    => install (drop 2 args) pkg
+                               "list"       => system "ls -d1 C:\\Idris/*/"
                                
                                _            => putStrLn "What?"
             _ => putStrLn "What?"
