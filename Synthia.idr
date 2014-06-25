@@ -3,6 +3,13 @@ module Main
 import Control.Eternal
 import Effect.System
 
+import Yaml
+
+test : String -> IO ()
+test s = case parse yamlToplevelValue s of
+  Left err => putStrLn $ "error: " ++ err
+  Right v  => print v
+
 ls : String -> IO String
 ls path = readProcess' ("ls " ++ path) False
 
@@ -39,7 +46,8 @@ goC pkg args cc =
         _ => putStrLn "No ipkg in this repository" 
 
 main : IO ()
-main = System.getArgs >>= \args =>
+main = System.getArgs >>= \args => do
+    test "a : \"b\""
     if length args > 1 then
         let pkg = filter (\x => isSuffixOf <| unpack ".ipkg"
                                            <| unpack (trim x))
