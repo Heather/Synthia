@@ -1,14 +1,18 @@
 module Main
 
 import Control.Eternal
+import Effect.StdIO
+import Effect.File
+
 import Effect.System
 
 import Yaml
+import Config
 
-test : String -> IO ()
+test : String -> { [STDIO] } Eff IO ()
 test s = case parse yamlToplevelValue s of
   Left err => putStrLn $ "error: " ++ err
-  Right v  => print v
+  Right v  => putStrLn $ show v
 
 ls : String -> IO String
 ls path = readProcess' ("ls " ++ path) False
@@ -45,9 +49,20 @@ goC pkg args cc =
                                   ++ mypkg
         _ => putStrLn "No ipkg in this repository" 
 
+quest : (List String) -> { [STDIO] } Eff IO ()
+quest file = do
+    let config = concat file
+    test config
+
+compile : String -> FileIO () ()
+compile f = do case !(open f Read) of
+                True => do quest !readFile
+                           close {- =<< -}
+                False => putStrLn "Error!"
+
 main : IO ()
 main = System.getArgs >>= \args => do
-    test "a : \"b\""
+    run $ compile "Synthia.syn"
     if length args > 1 then
         let pkg = filter (\x => isSuffixOf <| unpack ".ipkg"
                                            <| unpack (trim x))
