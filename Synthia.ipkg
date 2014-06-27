@@ -1,6 +1,6 @@
 package Synthia
 
-modules = Config, Synthia
+modules = Synthia
 opts = "-p effects -p Control.Eternal -p yaml -p lightyear" 
 
 executable = Synthia
