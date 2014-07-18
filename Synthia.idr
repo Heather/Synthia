@@ -10,7 +10,6 @@ import Effect.System
 import Yaml
 
 import Effects
-import System
 
 {- let start from simple -}
 ls : String -> IO String
@@ -27,11 +26,11 @@ instance Handler Eternal (IOExcept a) where
 ETERNAL : EFFECT
 ETERNAL = MkEff () Eternal
 
-els : String -> { [ETERNAL] } Eff IO String
+els : String -> { [ETERNAL] } Eff String
 els s = call $ LS s
 
 EternalIO : Type -> Type -> Type
-EternalIO st t = { [FILE_IO st, STDIO, SYSTEM, ETERNAL] } Eff IO t 
+EternalIO st t = { [FILE_IO st, STDIO, SYSTEM, ETERNAL] } Eff t 
 
 {- WE NEED ETERNAL POWER! -}
 readFile : EternalIO (OpenFile Read) (List String)
@@ -41,12 +40,12 @@ readFile = readAcc [] where
                               else return  $ reverse acc
 
 {- IT'S NOT JUST SYSTEM CALL, IT'S POWERFUL THING!-}
-sys : String -> { [STDIO, SYSTEM, ETERNAL] } Eff IO ()
+sys : String -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
 sys ss = do system ss
             return ()
 
 {- THAT'S HOW NEW PACKAGES IS ISNTALLED -}
-finalInstall : String -> List String -> List String -> { [STDIO, SYSTEM, ETERNAL] } Eff IO ()
+finalInstall : String -> List String -> List String -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
 finalInstall repoDir synss flist =
     case (synss # 0) of
         Just syn => do {- PROCESS PACKAGE INSTALLATION -}
@@ -67,7 +66,7 @@ finalInstall repoDir synss flist =
 - I'll not leave you here. I've got to save you. 
 - You already have, Luke.
 -}
-install : List String -> List String -> { [STDIO, SYSTEM, ETERNAL] } Eff IO ()
+install : List String -> List String -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
 install [] [] = putStrLn "try Synthia install GitHubUser/Repo"
 install [] xs = let Just mypkg = xs # 0
                 in sys $ "idris --install " ++ mypkg
@@ -88,7 +87,7 @@ install xs _ = do
         _ => putStrLn "try Synthia install GitHubUser/Repo" 
 
 {- SYMPLY RUN IDRIS WITH ARGUMENTS -}
-goC : List String -> List String -> String -> { [STDIO, SYSTEM, ETERNAL] } Eff IO ()
+goC : List String -> List String -> String -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
 goC pkg args cc =
     case (pkg # 0) of
         Just mypkg => sys $ cc ++ concat <<| drop 2 args
@@ -97,7 +96,7 @@ goC pkg args cc =
         _ => putStrLn "No ipkg in this repository" 
 
 {- TRUE MAIN -}
-procs : (List String) -> (List String) -> Bool -> { [STDIO, SYSTEM, ETERNAL] } Eff IO ()
+procs : (List String) -> (List String) -> Bool -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
 procs args file p =
     let config = concat file {- READ OWN CONFIG FILE -}
     in case parse yamlToplevelValue config of
