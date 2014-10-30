@@ -67,7 +67,10 @@ finalInstall repoDir synss flist =
 - You already have, Luke.
 -}
 install : List String -> List String -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
-install [] [] = putStrLn "try Synthia install GitHubUser/Repo"
+install [] [] = do putStrLn "try Synthia install GitHubUser/Repo"
+                   putStrLn "Note that there should be .syn file"
+                   putStrLn "Examples: Synthia install Heather/Idris.Yaml"
+                   putStrLn "          Synthia install Heather/Control.Eternal.Idris"
 install [] xs = let Just mypkg = xs # 0
                 in sys $ "idris --install " ++ mypkg
 install xs _ = do
@@ -84,7 +87,7 @@ install xs _ = do
                                                              <| unpack (trim x)) flist
                         finalInstall repoDir synss flist
 
-        _ => putStrLn "try Synthia install GitHubUser/Repo" 
+        _ => install [] []
 
 {- SYMPLY RUN IDRIS WITH ARGUMENTS -}
 goC : List String -> List String -> String -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
@@ -108,7 +111,10 @@ procs args file p =
                               $ splitOn '\n' !(els ".")
                   in case (args # 1) of
                         Just cmd => case cmd of
-                                       "--help"     => putStrLn "try Synthia install GitHubUser/Repo"
+                                       "--help"     => do putStrLn "try Synthia install GitHubUser/Repo"
+                                                          putStrLn "Note that there should be .syn file"
+                                                          putStrLn "Examples: Synthia install Heather/Idris.Yaml"
+                                                          putStrLn "          Synthia install Heather/Control.Eternal.Idris"
                                        "--version"  => putStrLn "0.0.2"
                                        
                                        "build"      => goC pkg args "idris --build "
@@ -140,6 +146,5 @@ cfg f args =
                                 False => putStrLn "Error!"
         _ => putStrLn "Hi, I am Synthia, I am here to destroy your world, I'm also weird by design"
 
-{- niaM -}
 main : IO ()
 main = System.getArgs >>= \args => run $ cfg "Synthia.syn" args
