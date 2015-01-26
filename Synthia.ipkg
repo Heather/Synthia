@@ -1,6 +1,6 @@
 package Synthia
 
-modules = Synthia
+modules = Defects, Synthia
 opts = "-p effects -p Control.Eternal -p Control.Unicode -p yaml -p lightyear"
 
 executable = Synthia
