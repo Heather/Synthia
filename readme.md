@@ -1,4 +1,4 @@
-Synthia
+Synthia [![Twitter][]](http://www.twitter.com/Cynede)
 -------
 
 Package manager, THE WORST...
@@ -45,3 +45,5 @@ install xs _ = do
                             _ => putStrLn "No ipkg in this repository"
         _ => putStrLn "try Synthia install GitHubUser/Repo"
 ```
+
+[Twitter]: http://mxtoolbox.com/Public/images/twitter-icon.png
