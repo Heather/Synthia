@@ -23,7 +23,7 @@ Type checking .\Control\Eternal.idr
 Installing Control\Eternal.ibc to ....\cabal\idris-
 ```
 
-```haskell
+```idris
 -- for now I target Just windows...
 install : List String -> List String -> IO()
 install [] [] = putStrLn "try Synthia install GitHubUser/Repo"
@@ -42,6 +42,6 @@ install xs _ = do
                                      $ splitOn '\n' !(ls repoDir)
                         case (pkg # 0) of
                             Just pkg => system $ "pushd " ++ repoDir ++ " & idris --install " ++ pkg
-                            _ => putStrLn "No ipkg in this repository" 
-        _ => putStrLn "try Synthia install GitHubUser/Repo" 
+                            _ => putStrLn "No ipkg in this repository"
+        _ => putStrLn "try Synthia install GitHubUser/Repo"
 ```
