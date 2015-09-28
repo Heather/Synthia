@@ -3,17 +3,20 @@ module Main
 import Control.Eternal
 import Control.IOExcept
 
+import Prelude.Interactive
+
 import Effect.StdIO
 import Effect.File
 import Effect.System
 
+import Unicode
 import Yaml
 
 import Effects
 
 {- let start from simple -}
-ls : String -> IO String
-ls path = readProcess' ("ls " ++ path) False 
+ls : String -> ໒ String
+ls path = readProcess' ("ls " ++ path) False
 
 {- ETERNAL EFFECT WILL DO LS and stuff in EternalIO -}
 data Eternal : Effect where
@@ -26,11 +29,11 @@ instance Handler Eternal (IOExcept a) where
 ETERNAL : EFFECT
 ETERNAL = MkEff () Eternal
 
-els : String -> { [ETERNAL] } Eff String
+els : String -> { [ETERNAL] } ♬ String
 els s = call $ LS s
 
 EternalIO : Type -> Type -> Type
-EternalIO st t = { [FILE_IO st, STDIO, SYSTEM, ETERNAL] } Eff t 
+EternalIO st t = { [FILE_IO st, STDIO, SYSTEM, ETERNAL] } ♬ t
 
 {- WE NEED ETERNAL POWER! -}
 readFile : EternalIO (OpenFile Read) (List String)
@@ -40,101 +43,101 @@ readFile = readAcc [] where
                               else return  $ reverse acc
 
 {- IT'S NOT JUST SYSTEM CALL, IT'S POWERFUL THING!-}
-sys : String -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
+sys : String -> { [STDIO, SYSTEM, ETERNAL] } ♬ ()
 sys ss = do system ss
             return ()
 
 {- THAT'S HOW NEW PACKAGES IS ISNTALLED -}
-finalInstall : String -> List String -> List String -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
+finalInstall : String -> List String -> List String -> { [STDIO, SYSTEM, ETERNAL] } ♬ ()
 finalInstall repoDir synss flist =
-    case (synss # 0) of
+    case (synss ‼ 0) of
         Just syn => do {- PROCESS PACKAGE INSTALLATION -}
             let truesyn = repoDir ++ syn
-            sys $ "pushd " ++ repoDir ++ " & Synthia --install " ++ truesyn
-            
+            sys $ "pushd " ⧺ repoDir ⧺ " & Synthia --install " ⧺ truesyn
+
             {- Finishing installation -}
             let makeF = filter (== "Makefile") flist
-            case (makeF # 0) of
-                Just _ => sys $ "pushd " ++ repoDir ++ " & make & make install"
-                _ => let pkg = filter (\x => isSuffixOf <| unpack ".ipkg"
+            case (makeF ‼ 0) of
+                Just _ => sys $ "pushd " ⧺ repoDir ⧺ " & make & make install"
+                _ => let pkg = filter (λ x → isSuffixOf <| unpack ".ipkg"
                                                         <| unpack (trim x)) flist
-                     in case (pkg # 0) of
-                         Just pkg => sys $ "pushd " ++ repoDir ++ " & idris --install " ++ pkg
+                     in case (pkg ‼ 0) of
+                         Just pkg => sys $ "pushd " ⧺ repoDir ⧺ " & idris --install " ⧺ pkg
                          _ => putStrLn "No ipkg in this repository"
         _ => putStrLn "No synthia in this repository"
-{- 
-- I'll not leave you here. I've got to save you. 
+{-
+- I'll not leave you here. I've got to save you.
 - You already have, Luke.
 -}
-install : List String -> List String -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
-install [] [] = do putStrLn "try Synthia install GitHubUser/Repo"
-                   putStrLn "Note that there should be .syn file"
-                   putStrLn "Examples: Synthia install Heather/Idris.Yaml"
-                   putStrLn "          Synthia install Heather/Control.Eternal.Idris"
-install [] xs = let Just mypkg = xs # 0
+install : List String -> List String -> { [STDIO, SYSTEM, ETERNAL] } ♬ ()
+install [] [] = do ➢ "try Synthia install GitHubUser/Repo"
+                   ➢ "Note that there should be .syn file"
+                   ➢ "Examples: Synthia install Heather/Idris.Yaml"
+                   ➢ "          Synthia install Heather/Control.Eternal.Idris"
+install [] xs = let Just mypkg = xs ‼ 0
                 in sys $ "idris --install " ++ mypkg
 install xs _ = do
     let dir = "C:\\Idris\\"
-    let Just repo = xs # 0
-    case (splitOn '/' (unpack repo)) # 1 of
-        Just repx => do let reps = pack repx
-                        sys $ "mkdir " ++ dir
-                        let repoDir = dir ++ reps ++ "\\"
-                        sys $ "git clone git@github.com:" ++ repo ++ ".git " ++ repoDir
+    let Just repo = xs ‼ 0
+    case (splitOn '/' (❃ repo)) ‼ 1 of
+        Just repx => do let reps = ◉ repx
+                        sys $ "mkdir " ⧺ dir
+                        let repoDir = dir ⧺ reps ⧺ "\\"
+                        sys $ "git clone git@github.com:" ⧺ repo ⧺ ".git " ⧺ repoDir
                         let flist = splitOn '\n' !(els repoDir)
                         {- PROCESS DEP CHECK! .syn SYNTHIA FILES -}
-                        let synss = filter (\x => isSuffixOf <| unpack ".syn"
+                        let synss = filter (λ x → isSuffixOf <| unpack ".syn"
                                                              <| unpack (trim x)) flist
                         finalInstall repoDir synss flist
 
         _ => install [] []
 
 {- SYMPLY RUN IDRIS WITH ARGUMENTS -}
-goC : List String -> List String -> String -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
+goC : List String -> List String -> String -> { [STDIO, SYSTEM, ETERNAL] } ♬ ()
 goC pkg args cc =
     case (pkg # 0) of
         Just mypkg => sys $ cc ++ concat <<| drop 2 args
                                ++ " "
                                ++ mypkg
-        _ => putStrLn "No ipkg in this repository" 
+        _ => putStrLn "No ipkg in this repository"
 
 {- TRUE MAIN -}
-procs : (List String) -> (List String) -> Bool -> { [STDIO, SYSTEM, ETERNAL] } Eff ()
+procs : (List String) -> (List String) -> Bool -> { [STDIO, SYSTEM, ETERNAL] } ♬ ()
 procs args file p =
     let config = concat file {- READ OWN CONFIG FILE -}
     in case parse yamlToplevelValue config of
-       Left err => putStrLn $ "error: " ++ err
+       Left err => putStrLn ("error: " ++ err)
        Right v  =>
-        if p then putStrLn $ show v -- TODO: Install finally deps
-             else let pkg = filter (\x => isSuffixOf <| unpack ".ipkg"
+        if p then putStrLn (✪ v) -- TODO: Install finally deps
+             else let pkg = filter (λ x → isSuffixOf <| unpack ".ipkg"
                                                      <| unpack (trim x))
                               $ splitOn '\n' !(els ".")
-                  in case (args # 1) of
+                  in case (args ‼ 1) of
                         Just cmd => case cmd of
-                                       "--help"     => do putStrLn "try Synthia install GitHubUser/Repo"
-                                                          putStrLn "Note that there should be .syn file"
-                                                          putStrLn "Examples: Synthia install Heather/Idris.Yaml"
-                                                          putStrLn "          Synthia install Heather/Control.Eternal.Idris"
-                                       "--version"  => putStrLn "0.0.2"
-                                       
+                                       "--help"     => do ➢ "try Synthia install GitHubUser/Repo"
+                                                          ➢ "Note that there should be .syn file"
+                                                          ➢ "Examples: Synthia install Heather/Idris.Yaml"
+                                                          ➢ "          Synthia install Heather/Control.Eternal.Idris"
+                                       "--version"  => putStrLn "0.0.3"
+
                                        "build"      => goC pkg args "idris --build "
                                        "clean"      => goC pkg args "idris --clean "
                                        "mkdoc"      => goC pkg args "idris --mkdoc "
                                        "checkpkg"   => goC pkg args "idris --checkpkg "
                                        "testpkg"    => goC pkg args "idris --testpkg "
-                                       
+
                                        "install"    => install (drop 2 args) pkg
                                        "list"       => sys "ls -d1 C:\\Idris/*/"
-                                       
+
                                        _            => putStrLn "What?"
-                        _ => putStrLn "What?"
+                        _ => ➢ "What?"
 
 {- GET SYNTHIA CONFIG AND PROCESS -}
 cfg : String -> (List String) -> EternalIO () ()
-cfg f args = 
-    case (args # 1) of
+cfg f args =
+    case (args ‼ 1) of
         Just cmd => case cmd of
-                        "--install" => case (args # 2) of
+                        "--install" => case (args ‼ 2) of
                                         Just syn => case !(open syn Read) of
                                                         True => do procs args !readFile True
                                                                    close {- =<< -}
@@ -144,7 +147,7 @@ cfg f args =
                                 True => do procs args !readFile False
                                            close {- =<< -}
                                 False => putStrLn "Error!"
-        _ => putStrLn "Hi, I am Synthia, I am here to destroy your world, I'm also weird by design"
+        _ => ➢ "Hi, I am Synthia, I am here to destroy your world, I'm also weird by design"
 
-main : IO ()
-main = System.getArgs >>= \args => run $ cfg "Synthia.syn" args
+main : ໒ ()
+main = getArgs >>= λ args → run $ cfg "Synthia.syn" args
