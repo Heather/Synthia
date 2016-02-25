@@ -14,6 +14,8 @@ import Yaml
 
 import Effects
 
+%access public export
+
 {- let start from simple -}
 ls : String → ໒ String
 ls path = readProcess' ("ls " ++ path) False
@@ -21,9 +23,9 @@ ls path = readProcess' ("ls " ++ path) False
 {- ETERNAL EFFECT WILL DO LS and stuff in EternalIO -}
 data Eternal : Effect where
   LS : String → { () } Eternal String
-instance Handler Eternal IO where
+implementation Handler Eternal IO where
   handle () (LS s) k = do x <- ls s; k x ()
-instance Handler Eternal (IOExcept a) where
+implementation Handler Eternal (IOExcept a) where
   handle () (LS s) k = do x <- ioe_lift $ ls s; k x ()
 
 ETERNAL : EFFECT
