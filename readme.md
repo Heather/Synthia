@@ -3,6 +3,8 @@ Synthia [![Twitter][]](http://www.twitter.com/Cynede)
 
 Package manager, THE WORST...
 
+(should be rewritten when filesystem library will be implemented in Idris)
+
 ```shell
 >Synthia install Heather/Control.Eternal.Idris
 
